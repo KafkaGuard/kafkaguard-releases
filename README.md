@@ -101,20 +101,95 @@ sha256sum -c kafkaguard_1.0.0_checksums.txt
 
 ## 📊 What You Get
 
+### 🖥️ CLI Scan Output
+
 ```
-┌─────────────────────────────────────────────────┐
-│           KafkaGuard Security Report            │
-├─────────────────────────────────────────────────┤
-│  🟢 Authentication (TLS/SASL)      8/8 passed  │
-│  🟡 Authorization (ACLs)           6/7 passed  │
-│  🟢 Encryption (in-transit)        5/5 passed  │
-│  🔴 Network Configuration          3/5 passed  │
-│  🟢 Audit Logging                  4/4 passed  │
-├─────────────────────────────────────────────────┤
-│  Overall Score: 87/100  │  Risk Level: LOW      │
-│  PCI-DSS: COMPLIANT     │  CIS: 26/29 controls  │
-└─────────────────────────────────────────────────┘
+$ kafkaguard scan --bootstrap kafka-prod:9092 --policy enterprise-default
+
+# Connecting to cluster...
+Cluster: kafka-prod (3 brokers) · Protocol: SASL_SSL
+
+# Running 40 controls...
+PASS  SEC-001  TLS encryption enabled on all listeners
+PASS  SEC-002  SASL authentication mechanism configured
+FAIL  SEC-004  ACL authorization is not enabled
+PASS  REL-001  Replication factor ≥ 3 for all topics
+WARN  REL-003  min.insync.replicas = 1 (recommended: 2)
+PASS  OPS-007  Log retention policy configured
+... 34 more controls
+
+─────────────────────────────────────────
+Score: 87/100 · 36 passed · 3 warnings · 1 failed
+Report saved: ./kafkaguard-report.html
+Completed in 8.2s
 ```
+
+### 📄 HTML Report
+
+KafkaGuard generates **professional, audit-ready HTML reports** — perfect for compliance teams and security reviews.
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  ░░░░░░░░░░░░░░░  KafkaGuard Scan Report  ░░░░░░░░░░░░░░░░░░░░░░  │
+│  ░░░░░░░░░░░░░░░░░░  kafka-prod cluster  ░░░░░░░░░░░░░░░░░░░░░░░  │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  📋 EXECUTIVE SUMMARY                                                │
+│  ┌──────────┬──────────┬──────────┬────────────────┐                 │
+│  │ Cluster  │ Brokers  │ Topics   │ ZooKeeper      │                 │
+│  │kafka-prod│    3     │   47     │   3 nodes      │                 │
+│  └──────────┴──────────┴──────────┴────────────────┘                 │
+│                                                                      │
+│              ╔══════════════════════╗                                 │
+│              ║    87.0%             ║                                 │
+│              ║  COMPLIANCE SCORE    ║                                 │
+│              ║    87 / 100          ║                                 │
+│              ╚══════════════════════╝                                 │
+│                                                                      │
+│    ┌────────────┐  ┌────────────┐  ┌────────────┐                    │
+│    │  ✅  36    │  │  ❌   1    │  │  ➖   3    │                    │
+│    │  Passed    │  │  Failed    │  │   N.A.     │                    │
+│    └────────────┘  └────────────┘  └────────────┘                    │
+│                                                                      │
+│  Policy: enterprise-default (v2.1)                                   │
+│  Scan ID: 8f2a4b6c · Mar 25, 2026 10:30 AM · Duration: 8200ms      │
+│                                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  🔍 CONTROLS EVALUATION                                              │
+│  ┌────────┬──────────┬────────────────────────────────┬──────────┐   │
+│  │ Status │ Control  │ Title                          │ Severity │   │
+│  ├────────┼──────────┼────────────────────────────────┼──────────┤   │
+│  │   ✓    │ SEC-001  │ TLS encryption on listeners    │   HIGH   │   │
+│  │   ✓    │ SEC-002  │ SASL authentication configured │   HIGH   │   │
+│  │   ✗    │ SEC-004  │ ACL authorization not enabled   │   HIGH   │   │
+│  │   ✓    │ REL-001  │ Replication factor ≥ 3         │  MEDIUM  │   │
+│  │   ✓    │ REL-003  │ In-sync replicas configured    │  MEDIUM  │   │
+│  │   ✓    │ OPS-007  │ Log retention policy set        │   LOW    │   │
+│  └────────┴──────────┴────────────────────────────────┴──────────┘   │
+│                                                                      │
+│  ⚠️  REMEDIATION — SEC-004                                           │
+│  │ Enable ACL authorization by setting                               │
+│  │ authorizer.class.name=kafka.security.authorizer.AclAuthorizer     │
+│  │ in server.properties and restart brokers.                         │
+│                                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  📑 COMPLIANCE MAPPING                                               │
+│  ┌─────────────┬─────────────┬──────────────┐                        │
+│  │  PCI-DSS    │    SOC2     │  ISO 27001   │                        │
+│  ├─────────────┼─────────────┼──────────────┤                        │
+│  │ Req 2.2.1   │ CC6.1       │ A.10.1.1     │                        │
+│  │ Req 4.1     │ CC6.6       │ A.13.1.1     │                        │
+│  │ Req 7.1     │ CC6.3       │ A.9.4.1      │                        │
+│  │ Req 10.1    │ CC7.2       │ A.12.4.1     │                        │
+│  └─────────────┴─────────────┴──────────────┘                        │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+  Generated by KafkaGuard v1.0.0
+```
+
+> 💡 Reports are generated as **interactive HTML files** with expandable remediation guidance, tabbed compliance mapping, and print-friendly styling. Export as **JSON** or **CSV** for CI/CD integration.
 
 ---
 
