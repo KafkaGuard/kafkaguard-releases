@@ -248,6 +248,8 @@ docker pull kafkaguard/dashboard:2.3.0
 | macOS | Apple Silicon (ARM64) | [kafkaguard\_Darwin\_arm64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard_Darwin_arm64.tar.gz) |
 | macOS | Intel (x86\_64) | [kafkaguard\_Darwin\_x86\_64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard_Darwin_x86_64.tar.gz) |
 
+**Note:** The "Source code" downloads on this page contain only this repository's README and logo — not the KafkaGuard application source code, which is proprietary.
+
 ### Verify integrity
 
 ```bash
