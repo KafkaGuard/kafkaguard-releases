@@ -241,6 +241,19 @@ docker pull kafkaguard/dashboard:2.3.0
 
 ### v2.3.0
 
+### On-Prem Bundle (Recommended)
+
+Includes CLI binary + Docker Compose stack + installer scripts + policies — everything in one download:
+
+| Platform | Download |
+|:---------|:---------|
+| macOS (Apple Silicon) | [kafkaguard-onprem-v2.3.0-Darwin_arm64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard-onprem-v2.3.0-Darwin_arm64.tar.gz) |
+| macOS (Intel) | [kafkaguard-onprem-v2.3.0-Darwin_x86_64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard-onprem-v2.3.0-Darwin_x86_64.tar.gz) |
+| Linux (x86_64) | [kafkaguard-onprem-v2.3.0-Linux_x86_64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard-onprem-v2.3.0-Linux_x86_64.tar.gz) |
+| Linux (ARM64) | [kafkaguard-onprem-v2.3.0-Linux_arm64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard-onprem-v2.3.0-Linux_arm64.tar.gz) |
+
+### CLI Binary Only
+
 | Platform | Architecture | Download |
 |:---------|:------------|:---------|
 | Linux | x86\_64 | [kafkaguard\_Linux\_x86\_64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard_Linux_x86_64.tar.gz) |
