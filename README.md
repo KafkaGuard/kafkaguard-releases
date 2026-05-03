@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://kafkaguard.com/icon.png" alt="KafkaGuard" width="72" height="72" />
+<img src="logo.png" alt="KafkaGuard" width="72" height="72" />
 
 # KafkaGuard
 
@@ -21,9 +21,9 @@
 
 ## What is KafkaGuard?
 
-KafkaGuard is a single-binary CLI that scans Apache Kafka clusters against security and compliance policies. It collects broker configs, ACLs, TLS settings, and operational metrics — then evaluates them against **55 controls** across security, reliability, and operations — and produces reports in JSON, HTML, PDF, and CSV.
+KafkaGuard is a single-binary CLI that scans Apache Kafka clusters against security and compliance policies. It collects broker configs, ACLs, TLS settings, and operational metrics — evaluates them against **55 controls** across security, reliability, and operations — and produces reports in JSON, HTML, PDF, and CSV.
 
-It runs entirely inside your network. No data leaves your environment.
+Runs entirely inside your network. No data leaves your environment.
 
 ```bash
 kafkaguard scan --bootstrap kafka-prod:9092 --policy policies/finance-iso.yaml --format pdf
@@ -42,8 +42,44 @@ kafkaguard scan --bootstrap kafka-prod:9092 --policy policies/finance-iso.yaml -
 | **Alerting** | Slack · Microsoft Teams · Generic webhook — fire on completion or score threshold |
 | **On-Prem Dashboard** | Multi-cluster view, trend charts, fleet compare, findings explorer |
 | **Kafka 2.6 → 4.x** | ZooKeeper and KRaft modes, Confluent Platform 6–8, Amazon MSK, Aiven |
-| **Air-gapped** | Runs fully offline — RSA-signed license, no outbound connections |
+| **Air-gapped** | Fully offline — RSA-signed license, no outbound connections |
 | **Fast** | Parallel collector — full 55-control scan in under 90 seconds |
+
+---
+
+## Dashboard
+
+The on-prem dashboard ships with all tiers including Community (single cluster, free forever).
+
+### Clusters Overview
+
+<img src="https://kafkaguard.com/images/screenshots/clusters.png" alt="KafkaGuard Clusters Dashboard" width="100%" />
+
+*All your Kafka clusters in one view — compliance score, environment tag, and open finding count.*
+
+### Findings Explorer
+
+<img src="https://kafkaguard.com/images/screenshots/findings.png" alt="KafkaGuard Findings Explorer" width="100%" />
+
+*Filter by severity, acknowledge findings, and expand inline remediation guidance.*
+
+### Trend Charts
+
+<img src="https://kafkaguard.com/images/screenshots/trends.png" alt="KafkaGuard Trend Charts" width="100%" />
+
+*Compliance score over time (7d / 30d / 90d / 1y) with regression highlighting.*
+
+### Scan Detail
+
+<img src="https://kafkaguard.com/images/screenshots/scan-detail.png" alt="KafkaGuard Scan Detail" width="100%" />
+
+*Drill into any scan — severity breakdown, all findings, download reports in any format.*
+
+### HTML Report
+
+<img src="https://kafkaguard.com/images/screenshots/report-html.png" alt="KafkaGuard HTML Report" width="100%" />
+
+*Interactive browser report with expandable remediation and tabbed compliance framework mapping.*
 
 ---
 
@@ -94,7 +130,6 @@ kafkaguard version
 ### 2. Run your first scan
 
 ```bash
-# Scan with the full 55-control policy
 kafkaguard scan \
   --bootstrap kafka-prod:9092 \
   --policy policies/finance-iso.yaml \
@@ -119,14 +154,13 @@ Evaluating 55 controls...
   PASS  KG-005  TLS certificate expiry > 30 days         HIGH
   PASS  KG-006  TLS 1.2+ enforced on all listeners       HIGH
   FAIL  KG-007  Inter-broker uses PLAINTEXT              HIGH
-  PASS  KG-008  ZooKeeper/KRaft ACL security enabled     MEDIUM
   FAIL  KG-001  SASL authentication not enabled          HIGH
   FAIL  KG-002  SSL/TLS not configured on listeners      HIGH
-  ...  48 more controls
+  ...  49 more controls
 
 ────────────────────────────────────────────────────
   Score   68%    39 passed · 16 failed · 0 N/A
-  Policy  finance-iso · 55 controls · Scan ID: a1b2c3d4
+  Policy  finance-iso · 55 controls
   Time    1.4s
 ────────────────────────────────────────────────────
 
@@ -140,7 +174,7 @@ Reports saved to ./audit-reports/
 ### 3. Common patterns
 
 ```bash
-# Weekly cron — scan + Slack alert if score drops below 85%
+# Slack alert when score drops below 85%
 kafkaguard scan \
   --bootstrap kafka-prod:9092 \
   --policy policies/finance-iso.yaml \
@@ -154,54 +188,13 @@ kafkaguard scan \
   --format json \
   --fail-on high
 
-# Upload to on-prem dashboard
+# Upload results to the on-prem dashboard
 export KAFKAGUARD_API_KEY=kg_prod_xxxxxxxxxxxx
 kafkaguard scan \
   --bootstrap kafka-prod:9092 \
   --policy policies/finance-iso.yaml \
   --upload http://kafkaguard-api:3001
 ```
-
----
-
-## Reports
-
-### PDF — Audit-ready
-
-The PDF includes an executive summary, full control table with severity ratings and remediation steps, compliance framework ID mapping (PCI-DSS / SOC 2 / ISO 27001), and an auditor sign-off page.
-
-```
-┌───────────────────────────────────────────────────┐
-│  KafkaGuard                          COMMUNITY   │
-│  Security Compliance Report                       │
-├───────────────────────────────────────────────────┤
-│  Cluster    kafka-prod:9092  ·  3 brokers         │
-│  Policy     finance-iso  ·  55 controls           │
-│  Score      68%  ████████████░░░░░░░░             │
-│  Date       May 3, 2026  ·  Scan ID: a1b2c3d4    │
-├────────┬─────────┬──────────────────────┬─────────┤
-│ Status │ Control │ Title                │Severity │
-├────────┼─────────┼──────────────────────┼─────────┤
-│  PASS  │  KG-004 │ No wildcard ACLs     │ MEDIUM  │
-│  PASS  │  KG-005 │ TLS cert expiry OK   │  HIGH   │
-│  FAIL  │  KG-001 │ SASL auth not set    │  HIGH   │
-│  FAIL  │  KG-002 │ SSL/TLS not config   │  HIGH   │
-│  FAIL  │  KG-007 │ PLAINTEXT inter-brkr │  HIGH   │
-│   …    │    …    │ 50 more controls     │   …     │
-├────────┴─────────┴──────────────────────┴─────────┤
-│  Remediation — KG-001                            │
-│  Set sasl.enabled.mechanisms=SCRAM-SHA-512 in    │
-│  server.properties and restart all brokers.      │
-└───────────────────────────────────────────────────┘
-```
-
-### HTML — Interactive browser report
-
-Expandable remediation sections, tabbed compliance mapping, severity filters, and print-ready styling. No server needed — open directly in any browser.
-
-### JSON / CSV — Pipeline integration
-
-Every finding includes `control_id`, `severity`, `category`, `status`, `description`, and `remediation`. Drop into Splunk, Datadog, Elastic, or any custom SIEM pipeline.
 
 ---
 
@@ -217,37 +210,27 @@ kafkaguard scan --bootstrap kafka:9092 \
 kafkaguard scan --bootstrap kafka:9092 \
   --alert-teams-webhook https://outlook.office.com/webhook/...
 
-# Any HTTP endpoint (PagerDuty, Discord, custom)
+# Generic HTTP endpoint (PagerDuty, Discord, custom)
 kafkaguard scan --bootstrap kafka:9092 \
-  --alert-webhook https://your-api/kafka-alerts \
-  --alert-threshold 90
-
-# Store webhook URLs in config file — no flags needed
-# ~/.kafkaguard.yaml
-# alert:
-#   slack_webhook: https://hooks.slack.com/...
-#   threshold: 85
+  --alert-webhook https://your-api/kafka-alerts
 ```
+
+Persist webhook URLs in `~/.kafkaguard.yaml` to avoid repeating flags on every run.
 
 ---
 
-## On-Prem Dashboard
-
-A web dashboard is included in all tiers (including Community). Deploy it alongside your Kafka infrastructure using the provided Docker Compose stack.
-
-**Dashboard features:**
-- **Clusters** — compliance score, environment tag, open findings count per cluster
-- **Findings Explorer** — filter by severity, acknowledge findings, inline remediation steps
-- **Trend Charts** — compliance score over time (7d / 30d / 90d / 1y) with regression highlighting
-- **Fleet Compare** — score delta badges and sparklines across all clusters
-- **Scan History** — every scan with policy used, score, upload time, and attribution
+## On-Prem Stack
 
 ```bash
-# Start the full on-prem stack (Postgres, Redis, MinIO, API, Worker, Dashboard)
 docker compose -f docker-compose.onprem.yml --env-file .env.onprem up -d
+# Dashboard → http://localhost:3000
+# API       → http://localhost:3001
+```
 
-# Dashboard is available at http://localhost:3000
-# API at http://localhost:3001
+```bash
+docker pull kafkaguard/api:2.3.0
+docker pull kafkaguard/worker:2.3.0
+docker pull kafkaguard/dashboard:2.3.0
 ```
 
 [→ Full on-prem setup guide](https://kafkaguard.com/docs/guide/installation-onprem)
@@ -265,8 +248,6 @@ docker compose -f docker-compose.onprem.yml --env-file .env.onprem up -d
 | macOS | Apple Silicon (ARM64) | [kafkaguard\_Darwin\_arm64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard_Darwin_arm64.tar.gz) |
 | macOS | Intel (x86\_64) | [kafkaguard\_Darwin\_x86\_64.tar.gz](https://github.com/KafkaGuard/kafkaguard-releases/releases/latest/download/kafkaguard_Darwin_x86_64.tar.gz) |
 
-Each archive contains a single `kafkaguard` binary. Place it anywhere on your `$PATH`.
-
 ### Verify integrity
 
 ```bash
@@ -277,14 +258,6 @@ shasum -a 256 -c checksums.txt
 
 # Linux
 sha256sum -c checksums.txt
-```
-
-### Docker — On-Prem Stack
-
-```bash
-docker pull kafkaguard/api:2.3.0
-docker pull kafkaguard/worker:2.3.0
-docker pull kafkaguard/dashboard:2.3.0
 ```
 
 ---
@@ -299,7 +272,7 @@ docker pull kafkaguard/dashboard:2.3.0
 | Aiven for Apache Kafka | All managed versions |
 | Redpanda | Compatible via Kafka API |
 
-KRaft clusters are auto-detected. ZooKeeper-only controls are skipped automatically and marked N/A.
+KRaft clusters are auto-detected. ZooKeeper-only controls skip automatically and are marked N/A.
 
 ---
 
@@ -307,29 +280,22 @@ KRaft clusters are auto-detected. ZooKeeper-only controls are skipped automatica
 
 | Policy | Controls | Use case |
 |:-------|:--------:|:---------|
-| `baseline-dev` | 21 | Dev, staging, sandbox clusters |
+| `baseline-dev` | 21 | Dev, staging, sandbox |
 | `enterprise-default` | 45 | Production, general security posture |
 | `finance-iso` | 55 | Regulated industries — PCI-DSS, SOC 2, ISO 27001 |
 
-The Community free tier can run any policy including `finance-iso` (55 controls).
+The Community free tier runs any policy including `finance-iso` (55 controls) — no restrictions.
 
 ---
 
 ## License Activation
 
 ```bash
-# Activate a paid license key
 kafkaguard license activate --key kg_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# Check current status
 kafkaguard license status
-
-# Hot-reload in the dashboard — no restart required
-kafkaguard license refresh --key kg_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Licenses are RSA-signed and validated fully offline. No internet connection required after activation.
-
+Licenses are RSA-signed and validated fully offline. No internet required after activation.
 Get a license at [kafkaguard.com/pricing](https://kafkaguard.com/pricing).
 
 ---
